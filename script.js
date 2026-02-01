@@ -1,22 +1,29 @@
-// 🔑 CONFIGURAÇÃO SUPABASE
-const SUPABASE_URL = "https://iqehcccxzfokmsoktjua.supabase.co";
-const SUPABASE_KEY = "sb_publishable_b1-CaCpTrnMHmNAnEVpOxA_NB0-rSMr";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// cria o client
-const supabase = supabaseJs.createClient(
+const SUPABASE_URL = "https://iqehcccxzfokmsoktjua.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_b1-CaCpTrnMHmNAnEVpOxA_NB0-rSMr";
+
+export const supabase = createClient(
   SUPABASE_URL,
-  SUPABASE_KEY
+  SUPABASE_ANON_KEY
 );
 
-// função chamada pelo botão
-async function login() {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google"
-  });
+// ===== TESTE DE CONEXÃO =====
+async function testarConexao() {
+  const { data, error } = await supabase
+    .from("comandos") // ⚠️ confirme o nome da tabela
+    .select("*")
+    .order("criado_em", { ascending: false })
+    .limit(5);
 
   if (error) {
-    alert("Erro no login: " + error.message);
+    console.error("Erro Supabase:", error.message);
+    document.getElementById("status").innerText = "❌ Erro ao conectar";
+    return;
   }
+
+  document.getElementById("status").innerText = "✅ Supabase conectado";
+  console.log("Dados recebidos:", data);
 }
 
-console.log("script.js carregado com sucesso");
+testarConexao();
